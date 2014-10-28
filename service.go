@@ -45,6 +45,12 @@ func (s *Service) SoapRequest(body *Body) (*Body, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	//4.1 hacks
+	xmlEnvelope = []byte(strings.Replace(string(xmlEnvelope), "XMLSchema-instance:type", "xsi:type", -1))
+	xmlEnvelope = []byte(strings.Replace(string(xmlEnvelope), "xmlns:XMLSchema-instance=\"http://www.w3.org/2001/XMLSchema-instance\"", "", -1))
+	xmlEnvelope = []byte(strings.Replace(string(xmlEnvelope), "<Body xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\">", "<Body xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">", -1))
+
 	req, err := http.NewRequest("POST", s.Url, bytes.NewReader(xmlEnvelope))
 	if err != nil {
 		return nil, err
